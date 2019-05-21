@@ -1,7 +1,10 @@
-package com.codeclan.walmart.Walmart;
+package com.codeclan.walmart.Walmart.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "departments")
@@ -14,8 +17,9 @@ public class Department {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "employees")
-    private ArrayList<Employee> employees;
+    @JsonIgnore
+    @OneToMany(mappedBy = "department")
+    private List<Employee> employees;
 
     public Department(String name) {
         this.name = name;
@@ -41,11 +45,19 @@ public class Department {
         this.name = name;
     }
 
-    public ArrayList<Employee> getEmployees() {
+    public List<Employee> getEmployees() {
         return employees;
     }
 
     public void setEmployees(ArrayList<Employee> employees) {
         this.employees = employees;
+    }
+
+    public void addEmployee(Employee employee){
+        this.employees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee){
+        this.employees.remove(employee);
     }
 }

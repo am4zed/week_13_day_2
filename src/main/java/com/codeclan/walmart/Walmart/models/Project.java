@@ -1,8 +1,11 @@
-package com.codeclan.walmart.Walmart;
+package com.codeclan.walmart.Walmart.models;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -18,8 +21,22 @@ public class Project {
     @Column(name = "duration")
     private int duration;
 
-    @Column(name = "employees")
-    private ArrayList<Employee> assignees;
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "employees_projects",
+            joinColumns = {@JoinColumn(
+                    name = "project_id",
+                    nullable = false,
+                    updatable = false)
+            },
+            inverseJoinColumns = {@JoinColumn(
+                    name = "employee_id",
+                    nullable = false,
+                    updatable = false)
+            }
+    )
+    private List<Employee> assignees;
 
     public Project(String name, int duration) {
         this.name = name;
@@ -54,11 +71,19 @@ public class Project {
         this.duration = duration;
     }
 
-    public ArrayList<Employee> getAssignees() {
+    public List<Employee> getAssignees() {
         return assignees;
     }
 
     public void setAssignees(ArrayList<Employee> assignees) {
         this.assignees = assignees;
+    }
+
+    public void assignEmployee(Employee employee) {
+        this.assignees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        this.assignees.remove(employee);
     }
 }

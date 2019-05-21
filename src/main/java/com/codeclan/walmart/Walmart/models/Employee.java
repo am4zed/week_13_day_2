@@ -1,9 +1,10 @@
-package com.codeclan.walmart.Walmart;
+package com.codeclan.walmart.Walmart.models;
 
-import org.hibernate.annotations.Generated;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "employees")
@@ -22,16 +23,44 @@ public class Employee {
     @Column(name = "employee_number")
     private int employeeNumber;
 
-    private ArrayList<Project> projects;
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
-    public Employee(String firstName, String lastName, int employeeNumber) {
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "employees_projects",
+            joinColumns = {@JoinColumn(
+                    name = "employee_id",
+                    nullable = false,
+                    updatable = false)
+            },
+            inverseJoinColumns = {@JoinColumn(
+                    name = "project_id",
+                    nullable = false,
+                    updatable = false)
+            }
+    )
+    private List<Project> projects;
+
+    public Employee(String firstName, String lastName, int employeeNumber, Department department) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.employeeNumber = employeeNumber;
         this.projects = new ArrayList<>();
+        this.department = department;
     }
 
     public Employee() {
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Long getId() {
@@ -66,11 +95,20 @@ public class Employee {
         this.employeeNumber = employeeNumber;
     }
 
-    public ArrayList<Project> getProjects() {
+    public List<Project> getProjects() {
         return projects;
     }
 
     public void setProjects(ArrayList<Project> projects) {
         this.projects = projects;
     }
+
+    public void addProject(Project project) {
+        this.projects.add(project);
+    }
+
+    public void removeProject(Project project) {
+        this.projects.remove(project);
+    }
+
 }
